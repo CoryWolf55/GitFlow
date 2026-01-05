@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from starlette import status
 from DTOs.userDTO import UserResponseDTO, UserCreateDTO, UserLoginDTO, UserLoginResponseDTO
@@ -6,14 +6,15 @@ from scripts.post_simplicity import *
 from scripts.auth import *
 from dependencies import get_db
 from models.user import User
-from main import app
+from main import app, limiter
 
 
 #Get User By username and password / Login
 """Checks if user exists, then checks password and username
 Checks by github username, then moves to verifying password"""
 @app.post("/user/login")
-def get_user(user_dto: UserLoginDTO, db: Session = Depends(get_db)):
+@limiter.limit("5/minute; 50/hour")  # max 5 login attempts per minute per IP
+def get_user(user_dto: UserLoginDTO, request: Request, db: Session = Depends(get_db)):
     print("received request")
     try:
         existing_user = (
@@ -33,11 +34,7 @@ def get_user(user_dto: UserLoginDTO, db: Session = Depends(get_db)):
         if not verify_password(user_dto.password, str(user.password)):
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
-        response = UserLoginResponseDTO(
-            github_id=user.github_id,
-            username=user.username,
-            age_range=user.age_range,
-        )
+        response = UserLoginResponseDTO.model_validate(user)
         return response
 
 
@@ -49,7 +46,8 @@ def get_user(user_dto: UserLoginDTO, db: Session = Depends(get_db)):
 #Create User / Sign Up
 """Checks if user exists, if not, creates new user"""
 @app.post("/user", response_model=UserResponseDTO)
-def create_user(user_dto: UserCreateDTO, db: Session = Depends(get_db)):
+@limiter.limit("10/minute; 100/hour")
+def create_user(user_dto: UserCreateDTO,request: Request, db: Session = Depends(get_db)):
     try:
         # check by UNIQUE field
         existing_user = (
