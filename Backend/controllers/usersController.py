@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, Request, APIRouter
+from fastapi import Depends, HTTPException, Request, APIRouter, Cookie
 from fastapi.responses import RedirectResponse
 import httpx
 from sqlalchemy.orm import Session
@@ -20,7 +20,7 @@ from slowapi.util import get_remote_address
 limiter = Limiter(key_func=get_remote_address)
 
 router = APIRouter()
-
+#Test
 @router.get("/user")
 def get_all_users(db: Session = Depends(get_db)):
     users = db.query(User).all()
@@ -111,6 +111,7 @@ load_dotenv(dotenv_path="envfolder/env_file.env")
 GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
 GITHUB_CALLBACK_URL = "http://localhost:8000/auth/github/callback"  # adjust for production
+frontend_url = "http://localhost:5173"
 @router.get("/auth/github/login")
 def github_login():
     github_auth_url = (
@@ -123,7 +124,7 @@ def github_login():
 
 
 @router.get("/auth/github/callback")
-def github_callback(code: str,db: Session = Depends(get_db)):
+def github_callback(code: str, db: Session = Depends(get_db)):
     # Exchange code for access token
     token_url = "https://github.com/login/oauth/access_token"
     headers = {"Accept": "application/json"}
@@ -160,18 +161,39 @@ def github_callback(code: str,db: Session = Depends(get_db)):
             new_user = User(
                 github_id=github_user["id"],
                 username=github_user.get("login", f"user_{github_user['id']}"),
-                access_token=access_token
+                access_token=hash_password(access_token)
             )
             post_commit(new_user, db)
-            return UserResponseDTO(github_id=new_user.github_id, username=new_user.username)
+            existing_user = new_user
+            #return UserResponseDTO(github_id=new_user.github_id, username=new_user.username)
         else:
             # Update access token safely
-            existing_user.access_token = access_token
+            existing_user.access_token = hash_password(access_token)
             db.commit()
-            return UserResponseDTO(github_id=existing_user.github_id, username=existing_user.username)
+
+            #return UserResponseDTO.model_validate(existing_user)
+
+        #Redirect
+        response = RedirectResponse(url=frontend_url)
+        #SetCookie
+        response.set_cookie(
+            key="userId",
+            value=str(existing_user.id),
+            httponly=True,
+            max_age=86400,  # 1 day
+            secure=False  # True in production with HTTPS
+        )
+        return response
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Database error: {e}")
+
+@router.get("/userID")
+@limiter.limit("5/min")
+def dashboard_data(request: Request, userId: str = Cookie(None)):
+    if not userId:
+        raise HTTPException(status_code=401, detail="Not logged in")
+    return {"userId": userId}
 
 
 
@@ -179,8 +201,13 @@ def github_callback(code: str,db: Session = Depends(get_db)):
 """Project FLow, Github redirect, grab token. Then create or login to local account. Local account will ask questions such as 
 age and password. This can then be moved onto the data showing or maybe resume viewing."""
 
+
+"""
+Example of Data Grab
+
 @router.get("/user/{user_id}/github-data")
-def get_github_data(user_id: int, db: Session = Depends(get_db)):
+
+def get_github_data(user_id: int,db: Session = Depends(get_db)):
     # 1. Get the user from your DB
     user = db.query(User).filter(User.id == user_id).first()
     if not user or not user.access_token:
@@ -221,3 +248,5 @@ def get_github_data(user_id: int, db: Session = Depends(get_db)):
         "emails": emails,
         "repos": repos
     }
+    
+"""

@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
+import LoginPage from "./pages/GitLoginPage";
 import Dashboard from "./pages/Dashboard";
-import GitHubCallback from "./pages/GitHubCallback";
+import SignUpPage from "./pages/SignUpPage";
 
 function App() {
   return (
@@ -9,7 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/auth/github/callback" element={<GitHubCallback />} />
+        <Route path="/signup" element={<SignUppage />} />
       </Routes>
     </Router>
   );

@@ -24,7 +24,7 @@ function LoginPage() {
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>Welcome to GitFlow</h1>
+      <h1>Welcome to Dev Metric</h1>
 
       <button
         onClick={handleGithubLogin}
