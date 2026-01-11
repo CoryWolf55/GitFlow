@@ -48,7 +48,7 @@ docker-compose up --build
 ![Landing](./screenshots/LandingPage.png)
 
 ### 🔹 Github Login Page
-![Login](./screenshots/LogInPage.png)
+![Login](./screenshots/LoginPage.png)
 
 ### 🔹 Sign Up/In Page
 ![Sign In](./screenshots/SignUpPage.png)
