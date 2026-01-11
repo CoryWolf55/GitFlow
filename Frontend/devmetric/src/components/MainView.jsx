@@ -20,7 +20,7 @@ const navigate = useNavigate();
         <div className="hero">
   <div className="hero-content">
     <h1 className="hero-title">
-      Measure your <span className="no-wrap">GitHub impact</span> against developers your age
+      Measure your <span className="hero-github-impact no-wrap">GitHub impact</span> against developers your age
     </h1>
 
     <p className="hero-subtitle">

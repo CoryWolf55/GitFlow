@@ -3,11 +3,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at top, #0f172a, #020617);
-  background-size: 200% 200%;
-  animation: backgroundPulse 18s ease-in-out infinite alternate;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(59,130,246,0.15), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(34,211,238,0.12), transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(139,92,246,0.10), transparent 50%),
+    linear-gradient(180deg, #0f172a 0%, #020617 100%);
+  background-size: 150% 150%, 150% 150%, 120% 120%, 100% 100%;
+  background-repeat: no-repeat;
+  animation: backgroundDrift 120s linear infinite, backgroundPulse 18s ease-in-out infinite alternate;
+  overflow: hidden;
 }
 
+/* Vertical gentle pulse for depth */
+@keyframes backgroundPulse {
+  0% { background-position: 50% 0%, 50% 0%, 50% 0%, 50% 0%; }
+  100% { background-position: 50% 100%, 50% 100%, 50% 100%, 50% 100%; }
+}
+
+/* Slow drifting for layered radial glows */
+@keyframes backgroundDrift {
+  0% { background-position: 0% 0%, 100% 100%, 50% 50%, 0 0; }
+  50% { background-position: 10% 15%, 90% 85%, 55% 60%, 0 0; }
+  100% { background-position: 0% 0%, 100% 100%, 50% 50%, 0 0; }
+}
 /* ===== Card Animation ===== */
 @keyframes fadeUp {
   from {

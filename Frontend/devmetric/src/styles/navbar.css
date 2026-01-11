@@ -1,45 +1,61 @@
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
+/* Navbar Animations */
 @keyframes navbarEnter {
-  from {
-    opacity: 0;
-    transform: translateY(-12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Navbar Base */
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 64px;
   padding: 0 2rem;
-  background-color: #0f172a;
+  background: linear-gradient(135deg, #0f172a, #020617);
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-
   animation: navbarEnter 0.6s ease-out 0.15s both;
-  will-change: transform, opacity;
+  position: relative;
+  z-index: 100;
+  overflow: hidden;
 }
 
+/* Optional subtle moving glow behind navbar */
+.navbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(34,211,238,0.05), rgba(139,92,246,0.05), rgba(59,130,246,0.1));
+  background-size: 300% 300%;
+  border-radius: inherit;
+  z-index: -1;
+  animation: gradientShift 20s ease infinite;
+}
+
+/* Logo */
 .navbar-left .logo {
   font-size: 1.35rem;
   font-weight: 700;
   color: #e5e7eb;
   letter-spacing: -0.5px;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition: color 0.3s ease, transform 0.2s ease, background 2s linear;
+  cursor: pointer;
 }
 
 .navbar-left .logo:hover {
   color: #22d3ee;
   transform: translateY(-1px);
+  background: linear-gradient(135deg, #22d3ee, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
+/* Links */
 .navbar-center {
   flex: 1;
   display: flex;
@@ -58,7 +74,7 @@
   font-weight: 500;
   color: #94a3b8;
   padding: 0.25rem 0;
-  transition: color 0.2s ease;
+  transition: color 0.25s ease;
 }
 
 .nav-links a:hover {
@@ -72,14 +88,15 @@
   bottom: -6px;
   width: 0%;
   height: 2px;
-  background-color: #3b82f6;
-  transition: width 0.25s ease;
+  background: linear-gradient(90deg, #22d3ee, #3b82f6, #8b5cf6);
+  transition: width 0.35s ease;
 }
 
 .nav-links a:hover::after {
   width: 100%;
 }
 
+/* Right Buttons */
 .navbar-right {
   display: flex;
   align-items: center;
@@ -95,14 +112,20 @@
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.25s ease;
+  transition: transform 0.15s ease, box-shadow 0.25s ease, background-position 3s ease;
+  background-size: 200% 200%; /* for gradient movement */
 }
 
 .button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35),
+              0 0 8px rgba(34, 211, 238, 0.2),
+              0 0 12px rgba(139, 92, 246, 0.15);
+  animation: gradientShift 3s ease infinite;
 }
 
 .button:active {
   transform: scale(0.97);
 }
+
+

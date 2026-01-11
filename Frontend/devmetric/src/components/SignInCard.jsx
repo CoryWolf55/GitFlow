@@ -24,7 +24,7 @@ function SignInCard({ githubUsername, onSubmit , setGithubUsername, canEdit}) {
     if(age)
     {
       setAge(age);
-      displayAge(age);
+      setDisplayAge(age);
     }
     else{
       setDisplayAge("Enter your age");

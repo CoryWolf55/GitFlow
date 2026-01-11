@@ -127,3 +127,112 @@
 .no-wrap {
   white-space: nowrap;
 }
+
+/* Hero Primary Button – toned-down gradient */
+.hero-button-primary {
+  background: linear-gradient(135deg, #3b82f6, #2563eb); /* normal gradient */
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.9rem 1.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.25s ease, background 0.3s ease;
+}
+
+/* Hover effect – subtle lift and shadow */
+.hero-button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(59, 130, 246, 0.25);
+  background: linear-gradient(135deg, #2563eb, #3b82f6); /* slightly darker on hover */
+}
+
+/* Active click effect */
+.hero-button-primary:active {
+  transform: scale(0.96);
+}
+
+/* Hero Secondary Button – “Learn More” with hover-only flowing border */
+.hero-button-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border-radius: 999px;
+  padding: 0.9rem 1.8rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  border: 2px solid rgba(148, 163, 184, 0.25); /* subtle base border */
+}
+
+/* Flowing gradient border – hidden by default */
+.hero-button-secondary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  padding: 2px; /* border thickness */
+  background: linear-gradient(90deg, #22d3ee, #3b82f6, #8b5cf6, #22d3ee);
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0; /* hidden by default */
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Hover effect – show border and animate */
+.hero-button-secondary:hover {
+  color: #ffffff;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 25px rgba(59, 130, 246, 0.25),
+              0 0 10px rgba(34, 211, 238, 0.15),
+              0 0 15px rgba(139, 92, 246, 0.15);
+}
+
+.hero-button-secondary:hover::before {
+  opacity: 1;
+  animation: borderFlow 3s linear infinite;
+}
+
+/* GitHub Impact intro underline */
+.hero-github-impact {
+  position: relative;
+  display: inline-block;
+  font-weight: 700;
+}
+
+/* Underline starts at 0 width */
+.hero-github-impact::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px; /* adjust spacing */
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg, #22d3ee, #3b82f6, #8b5cf6);
+  border-radius: 2px;
+  animation: underlineIntro 2s ease forwards; /* intro animation */
+}
+
+/* Keyframes: grow underline from 0 → 100% */
+@keyframes underlineIntro {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* Animate gradient around the button */
+@keyframes borderFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
