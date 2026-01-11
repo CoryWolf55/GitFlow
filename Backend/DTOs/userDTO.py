@@ -6,7 +6,7 @@ class UserCreateDTO(BaseModel):
     github_id: int
     username: str
     access_token: str
-    age_range: int
+    age: int
     password: str
 
     class Config:
@@ -30,7 +30,23 @@ class UserLoginDTO(BaseModel):
 class UserLoginResponseDTO(BaseModel):
     github_id: int
     username: str
-    age_range: Optional[int] = None
+    age: Optional[int] = None
+
+    class Config:
+        from_attributes = True
+
+class UserRegisterDTO(BaseModel):
+    username: str
+    password: str
+    age: int | None = None
+
+    class Config:
+        from_attributes = True
+
+class UserRegisterResponseDTO(BaseModel):
+    github_id: int
+    username: str
+    age: int
 
     class Config:
         from_attributes = True

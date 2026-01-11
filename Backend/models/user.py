@@ -10,6 +10,6 @@ class User(Base):
     github_id = Column(BigInteger, unique=True, nullable=False)
     username = Column(String(50), nullable=False)
     password = Column(String(255), nullable=True)
-    age_range = Column(BigInteger, nullable=True)
+    age = Column(BigInteger, nullable=True)
     access_token = Column(String(255), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

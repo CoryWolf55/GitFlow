@@ -13,8 +13,8 @@ function SignInCard({ githubUsername, onSubmit , setGithubUsername, canEdit}) {
   };
 
   useEffect(() => {
-    if (!canEdit) {
-      setTitleText("Please Log in");
+    if (canEdit) {
+      setTitleText("Log in");
       setButtonText("Complete Login");
     } else {
       setTitleText("Complete Your Signup"); 

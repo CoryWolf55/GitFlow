@@ -1,9 +1,11 @@
 from fastapi import Depends, HTTPException, Request, APIRouter, Cookie
 from fastapi.responses import RedirectResponse
 import httpx
+from sqlalchemy import null
 from sqlalchemy.orm import Session
 from starlette import status
-from DTOs.userDTO import UserResponseDTO, UserCreateDTO, UserLoginDTO, UserLoginResponseDTO
+from DTOs.userDTO import UserResponseDTO, UserCreateDTO, UserLoginDTO, UserLoginResponseDTO, UserRegisterDTO, \
+    UserRegisterResponseDTO
 from scripts.post_simplicity import *
 from scripts.auth import *
 import os
@@ -81,7 +83,7 @@ def create_user(user_dto: UserCreateDTO,request: Request, db: Session = Depends(
 
         user = User(
             github_id=user_dto.github_id,
-            username=user_dto.username,
+            username=user_dto.username.lower(),
             access_token=user_dto.access_token,
             #Hashing Password
             #password = hash_password(user_dto.password),
@@ -93,7 +95,7 @@ def create_user(user_dto: UserCreateDTO,request: Request, db: Session = Depends(
 
         user_response = UserResponseDTO(
             github_id=user_dto.github_id,
-            username=user_dto.username,
+            username=user_dto.username.lower(),
         )
         return user_response
 
@@ -102,6 +104,83 @@ def create_user(user_dto: UserCreateDTO,request: Request, db: Session = Depends(
     except Exception as e:
         post_rollback(e, db)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+
+"""Local Sign in or login route"""
+@router.post("/user/register")
+@limiter.limit("10/minute; 100/hour")
+def register_user(request: Request, user_dto: UserRegisterDTO, db: Session = Depends(get_db)):
+    #Check if user exists, if so update their info if changed, then log in
+    print("received request")
+    try:
+        existing_user = (
+            db.query(User)
+            .filter(User.username == user_dto.username)
+            .first()
+        )
+        # Check if there is a user that matches
+        if not existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User wasn't found!{Checked through username}",
+            )
+        #user found
+        user = existing_user
+
+        if user.password is None or user.password == "":
+            #password not set yet
+            user.password = hash_password(user_dto.password)
+        else:
+            #verify password
+            if not verify_password(user_dto.password, str(user.password)):
+                raise HTTPException(status_code=401, detail="Invalid credentials")
+
+        #user now verified
+
+        #updating info
+        #if age is valid update
+        if user_dto.age is not None and int(user_dto.age) > 0:
+            user.age = int(user_dto.age)
+
+        post_commit(user, db)
+
+        return UserRegisterResponseDTO.model_validate(user)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        post_rollback(e, db)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@router.get("/userID")
+@limiter.limit("5/min")
+def dashboard_data(request: Request, userId: str = Cookie(None)):
+    if not userId:
+        raise HTTPException(status_code=401, detail="Not logged in")
+    return {"userId": userId}
+
+"""Get Username using UserID for checking if already logged in"""
+
+@router.get("/user/username")
+@limiter.limit("5/min")
+def get_username(request: Request, db: Session = Depends(get_db), userId: str = Cookie(None)):
+    try:
+        if not userId:
+            raise HTTPException(status_code=401, detail="Not logged in")
+
+        user = db.query(User).filter(User.id == int(userId)).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return {"username": user.username}
+
+    except Exception as e:
+        # Print the real error to the console
+        print("Error in /user/username:", repr(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
 
 
 
@@ -160,15 +239,15 @@ def github_callback(code: str, db: Session = Depends(get_db)):
             # Create new user
             new_user = User(
                 github_id=github_user["id"],
-                username=github_user.get("login", f"user_{github_user['id']}"),
-                access_token=hash_password(access_token)
+                username=github_user.get("login", f"user_{github_user['id']}".lower()),
+                access_token=access_token
             )
             post_commit(new_user, db)
             existing_user = new_user
             #return UserResponseDTO(github_id=new_user.github_id, username=new_user.username)
         else:
             # Update access token safely
-            existing_user.access_token = hash_password(access_token)
+            existing_user.access_token = access_token
             db.commit()
 
             #return UserResponseDTO.model_validate(existing_user)
@@ -187,30 +266,6 @@ def github_callback(code: str, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Database error: {e}")
-
-@router.get("/userID")
-@limiter.limit("5/min")
-def dashboard_data(request: Request, userId: str = Cookie(None)):
-    if not userId:
-        raise HTTPException(status_code=401, detail="Not logged in")
-    return {"userId": userId}
-
-
-"""Get Username using UserID for checking if already logged in"""
-@router.get("/user/username")
-@limiter.limit("5/min")
-def get_username(request: Request, db: Session = Depends(get_db), userId: str = Cookie(None)):
-    if not userId:
-        raise HTTPException(status_code=401, detail="Not logged in")
-
-    # fetch user
-    user = db.query(User).filter(User.id == userId).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    return {
-        "username": user.username
-    }
 
 
 

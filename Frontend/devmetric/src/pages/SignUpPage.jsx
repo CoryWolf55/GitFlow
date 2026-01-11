@@ -1,4 +1,5 @@
 import { useState , useEffect} from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {API_URL_BASE} from "../config";
 import SignInCard from "../components/SignInCard";
@@ -7,7 +8,7 @@ import NavBar from "../components/NavBar";
 function SignUpPage() {
   const [githubUsername, setGithubUsername] = useState(""); // replace later with GitHub username
   const [canEdit, setCanEdit] = useState(false);
-
+  const navigate = useNavigate();
 
   //Check cookie for github auth
   useEffect(() => {
@@ -53,9 +54,19 @@ function SignUpPage() {
   const handleSignup = async (data) => {
     try {
       // Send to backend
-      const res = await axios.post("/auth/signup", data);
+      data.username = githubUsername;
+      const res = await axios.post(`${API_URL_BASE}/user/register`, data);
       console.log("Signup success:", res.data);
-      // redirect or show success message
+      responseData = res.data;
+      if(responseData){
+        localStorage.setItem("age", responseData.age);
+        localStorage.setItem("username", responseData.username);
+        localStorage.setItem("github_id", responseData.github_id);
+        // redirect
+        
+
+      }
+      
     } catch (err) {
       console.error("Signup error:", err);
       alert("Signup failed. Please try again.");

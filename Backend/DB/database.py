@@ -23,5 +23,6 @@ Base = declarative_base()
 # Import all models here so create_all knows about them
 from models.user import User  # import every model you have
 
+
 # Create tables
 Base.metadata.create_all(bind=engine)
