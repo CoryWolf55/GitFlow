@@ -22,9 +22,7 @@ Dockerized for easy setup and deployment
 
 ### Frontend: React.js, Tailwind CSS, Chart.js / Recharts
 
-### Database: SQLite (MVP) / PostgreSQL (production)
-
-ML/NLP: scikit-learn, pandas, numpy, spaCy / NLTK, optional HuggingFace embeddings
+### Database: MySQL
 
 ## Deployment: Docker, Render (backend), Vercel (frontend)
 
@@ -38,11 +36,22 @@ Docker & Docker Compose installed
 GitHub account
 
 **Clone the Repository**
-git clone https://github.com/CoryWolf55/GitFlow
-cd GitFlow
+git clone https://github.com/CoryWolf55/DevMetric
+cd DevMetric
 
-Run with Docker
+Run with Docker COMING SOON
 docker-compose up --build
+
+## Screenshots / Demo
+
+### 🔹 Landing Page
+![Landing](./screenshots/LandingPage.png)
+
+### 🔹 Github Login Page
+![Login](./screenshots/Loginpage.png)
+
+### 🔹 Sign Up/In Page
+![Sign In](./screenshots/SignUpPage.png)
 
 
 ## Usage
