@@ -80,13 +80,13 @@ function SignUpPage() {
     };
       const res = await axios.post(`${API_URL_BASE}/user/register`, payload);
       console.log("Signup success:", res.data);
-      responseData = res.data;
+      const responseData = res.data;
       if(responseData){
         localStorage.setItem("age", responseData.age);
         localStorage.setItem("username", responseData.username);
         localStorage.setItem("github_id", responseData.github_id);
         // redirect
-        
+        navigate("/dashboard");
 
       }
       

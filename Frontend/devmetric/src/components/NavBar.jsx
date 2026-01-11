@@ -17,7 +17,7 @@ function NavBar(props) {
             <a href="/leaderboard">Leaderboard</a>
           </li>
           <li>
-            <a href="/metrics">Metrics</a>
+            <a href="/dashboard">Metrics</a>
           </li>
           <li>
             <a href="/faq">FAQ</a>

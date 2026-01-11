@@ -116,7 +116,7 @@ def register_user(request: Request, user_dto: UserRegisterDTO, db: Session = Dep
     try:
         existing_user = (
             db.query(User)
-            .filter(User.username.lower() == user_dto.username.lower())
+            .filter(User.username == user_dto.username.lower())
             .first()
         )
         # Check if there is a user that matches
