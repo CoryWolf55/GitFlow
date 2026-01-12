@@ -1,0 +1,46 @@
+.profile-card {
+  display: flex;
+  align-items: flex-start;
+  background: #1f2937; /* dark gray background */
+  border-radius: 16px;
+  padding: 16px 20px;
+  gap: 16px;
+  width: 420px;
+  color: #f9fafb;
+  border: 1px solid #374151; /* subtle border for separation */
+  margin: 40px auto 0 40px; /* more top spacing, centered horizontally */
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1; /* allow text to expand */
+}
+
+.profile-username {
+  font-size: 20px;
+  font-weight: 600;
+  color: #38bdf8; /* DevMetric blue accent */
+  margin: 0;
+}
+
+.profile-details {
+  display: flex;
+  gap: 5px;
+  font-size: 14px;
+  color: #9ca3af; /* muted gray for secondary info */
+}
+
+.profile-age {
+  background: #111827; /* slightly darker badge background */
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.profile-bio {
+  font-size: 14px;
+  color: #d1d5db; /* slightly lighter than details for readability */
+  margin: 4px 0 0 0;
+  line-height: 1.4;
+}

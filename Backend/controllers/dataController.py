@@ -5,12 +5,13 @@ from models.user import User
 from dependencies import get_db
 from slowapi import Limiter
 from slowapi.util import get_remote_address
+import httpx
 
 limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
 
 @router.get("/data/avatar")
-@limiter.limit("10/minute")
+@limiter.limit("15/minute")
 def get_avatar(request: Request, userId: str = Cookie(None), db: Session = Depends(get_db)):
     print("Hit /data/avatar")
     print("userId cookie:", userId)
@@ -28,3 +29,23 @@ def get_avatar(request: Request, userId: str = Cookie(None), db: Session = Depen
 
     avatar_url = f"https://avatars.githubusercontent.com/u/{user.github_id}?v=4"
     return {"avatar_url": avatar_url}
+
+
+@router.get("/user/github-bio")
+@limiter.limit("15/minute")
+def get_github_bio(request: Request, userId: str = Cookie(None), db: Session = Depends(get_db)):
+    if not userId:
+        raise HTTPException(status_code=401, detail="Not logged in")
+
+    user = db.query(User).filter(User.id == int(userId)).first()
+    if not user or not user.access_token:
+        raise HTTPException(status_code=404, detail="User or token not found")
+
+    headers = {"Authorization": f"Bearer {user.access_token}"}
+    response = httpx.get("https://api.github.com/user", headers=headers)
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail="Failed to fetch GitHub profile")
+
+    data = response.json()
+    return {"bio": data.get("bio", "")}

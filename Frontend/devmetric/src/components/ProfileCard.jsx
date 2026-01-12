@@ -1,0 +1,32 @@
+import Avatar from "./Avatar";
+import "../styles/profileCard.css";
+import { useState, useEffect } from "react";
+
+function ProfileCard({ avatar_url , bio}) {
+  const [username, setUsername] = useState("");
+  const [age, setAge] = useState("");
+
+  useEffect(() => {
+    const u = localStorage.getItem("username");
+    const a = localStorage.getItem("age");
+    if (u) setUsername(u);
+    if (a) setAge(a);
+  }, []);
+
+  return (
+    <div className="profile-card">
+      <Avatar avatar_url={avatar_url} size={80} />
+      <div className="profile-info">
+        <h2 className="profile-username">{username || "Unknown User"}</h2>
+        <div className="profile-details">
+          {age && <span className="profile-age">{age} yrs</span>}
+          {age && <span className="profile-age">{age} Followers</span>}
+          {age && <span className="profile-age">{age} Following</span>}
+        </div>
+        {bio && <p className="profile-bio">{bio}</p>}
+      </div>
+    </div>
+  );
+}
+
+export default ProfileCard;

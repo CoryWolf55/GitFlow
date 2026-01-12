@@ -1,6 +1,7 @@
 import "../styles/loading.css";
 
 function Loading({ progress = 0, label = "Analyzing your GitHub data…" }) {
+
   return (
     <div className="loading-overlay">
       <div className="loading-card">
