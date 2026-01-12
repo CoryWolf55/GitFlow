@@ -8,6 +8,7 @@ import redis
 
 # Import the router
 from controllers.usersController import router as github_router  # <-- your controller
+from controllers.dataController import router as data_router  # <-- your controller
 
 app = FastAPI()
 
@@ -35,3 +36,4 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
 
 # Include your routes
 app.include_router(github_router)
+app.include_router(data_router)

@@ -1,5 +1,5 @@
-from fastapi import Depends, HTTPException, Request, APIRouter, Cookie
-from fastapi.responses import RedirectResponse
+from fastapi import Depends, HTTPException, Request, APIRouter, Cookie, Response
+from fastapi.responses import RedirectResponse, JSONResponse
 import httpx
 from sqlalchemy import null
 from sqlalchemy.orm import Session
@@ -28,89 +28,11 @@ def get_all_users(db: Session = Depends(get_db)):
     users = db.query(User).all()
     return [{"github_id": u.github_id, "username": u.username} for u in users]
 
-#Get User By username and password / Login
-"""Checks if user exists, then checks password and username
-Checks by github username, then moves to verifying password"""
-@router.post("/user/login")
-@limiter.limit("5/minute; 50/hour")  # max 5 login attempts per minute per IP
-def get_user(user_dto: UserLoginDTO, request: Request, db: Session = Depends(get_db)):
-    print("received request")
-    try:
-        existing_user = (
-            db.query(User)
-            .filter(User.username == user_dto.username)
-            .first()
-        )
-        #Check if there is a user that matches
-        if not existing_user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User wasn't found!{Checked through username}",
-            )
-        #set user
-        user = existing_user
-        #Checks password sent to password received
-        if not verify_password(user_dto.password, str(user.password)):
-            raise HTTPException(status_code=401, detail="Invalid credentials")
-
-        response = UserLoginResponseDTO.model_validate(user)
-        return response
-
-
-    except Exception as e:
-        print("Error fetching users:", e)
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-
-
-#Create User / Sign Up
-"""Checks if user exists, if not, creates new user"""
-@router.post("/user", response_model=UserResponseDTO)
-@limiter.limit("10/minute; 100/hour")
-def create_user(user_dto: UserCreateDTO,request: Request, db: Session = Depends(get_db)):
-    try:
-        # check by UNIQUE field
-        existing_user = (
-            db.query(User)
-            .filter(User.github_id == user_dto.github_id)
-            .first()
-        )
-
-        if existing_user:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="User already exists{Checked through github_id}",
-            )
-
-        user = User(
-            github_id=user_dto.github_id,
-            username=user_dto.username.lower(),
-            access_token=user_dto.access_token,
-            #Hashing Password
-            #password = hash_password(user_dto.password),
-        )
-
-
-        #sending data to base then frontend
-        post_commit(user, db)
-
-        user_response = UserResponseDTO(
-            github_id=user_dto.github_id,
-            username=user_dto.username.lower(),
-        )
-        return user_response
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        post_rollback(e, db)
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-
-
 
 """Local Sign in or login route"""
 @router.post("/user/register")
 @limiter.limit("10/minute; 100/hour")
-def register_user(request: Request, user_dto: UserRegisterDTO, db: Session = Depends(get_db)):
+def register_user(request: Request, user_dto: UserRegisterDTO,response:Response, db: Session = Depends(get_db)):
     #Check if user exists, if so update their info if changed, then log in
     print("Received user DTO:", user_dto)
     try:
@@ -144,7 +66,17 @@ def register_user(request: Request, user_dto: UserRegisterDTO, db: Session = Dep
             user.age = int(user_dto.age)
 
         post_commit(user, db)
-        return UserRegisterResponseDTO.model_validate(user)
+
+        # Return JSONResponse so cookie is sent properly
+        response = JSONResponse(content=UserRegisterResponseDTO.model_validate(user).model_dump())
+        response.set_cookie(
+            key="userId",
+            value=str(user.id),
+            httponly=True,
+            secure=False,
+            samesite="lax"
+        )
+        return response
 
     except HTTPException:
         raise
@@ -254,14 +186,6 @@ def github_callback(code: str, db: Session = Depends(get_db)):
 
         #Redirect
         response = RedirectResponse(url=frontend_url)
-        #SetCookie
-        response.set_cookie(
-            key="userId",
-            value=str(existing_user.id),
-            httponly=True,
-            max_age=86400,  # 1 day
-            secure=False  # True in production with HTTPS
-        )
         return response
     except Exception as e:
         db.rollback()
