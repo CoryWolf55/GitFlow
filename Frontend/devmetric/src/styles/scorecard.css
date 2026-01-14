@@ -1,0 +1,62 @@
+/* scorecard.css */
+/* scorecard.css */
+.score-card {
+  background: #1f2937;
+  border-radius: 16px;
+  padding: 16px 20px;
+  width: 200px;
+  text-align: center;
+  border: 1px solid #374151;
+  color: #f9fafb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+.circle-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 12px;
+}
+
+.progress-circle {
+  transform: rotate(90deg); /* clockwise fill starting at top */
+  width: 100%;
+  height: 100%;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #374151;
+  stroke-width: 4;
+}
+
+.circle-progress {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dasharray 1s ease, stroke 0.5s ease;
+}
+
+.score-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+.score-text small {
+  display: block;
+  font-size: 0.6rem;
+  color: #9ca3af;
+}
+
+.score-label {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  margin-top: 6px;
+  font-weight: 500;
+}

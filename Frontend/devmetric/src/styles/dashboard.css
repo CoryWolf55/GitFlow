@@ -1,0 +1,39 @@
+.dashboard-grid {
+  display: grid;
+  grid-template-rows: auto auto auto; /* 3 rows */
+  gap: 24px; /* spacing between rows */
+  padding: 40px; /* space from edges */
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+/* Top row: Profile left, Score right */
+.top-row {
+  display: grid;
+  grid-template-columns: 1fr 220px; /* left flexible, right fixed */
+  gap: 20px;
+  align-items: start;
+}
+
+/* Make it responsive: stack vertically on narrow screens */
+@media (max-width: 768px) {
+  .top-row {
+    grid-template-columns: 1fr; /* single column */
+  }
+
+  .top-row > :nth-child(2) {
+    justify-self: start; /* score card aligns left when stacked */
+  }
+}
+
+.middle-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.bottom-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}

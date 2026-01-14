@@ -53,3 +53,46 @@ def get_github_stats(request: Request, userId: str = Cookie(None), db: Session =
         "following": data.get("following", 0),
         "bio": data.get("bio", "")
     }
+
+@router.get("/data/top-repos")
+@limiter.limit("15/minute")
+def get_top_repos(request: Request, userId: str = Cookie(None), db: Session = Depends(get_db)):
+    """
+    Fetch top 5 GitHub repositories by star count for the logged-in user.
+    """
+    if not userId:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not logged in")
+
+    user = db.query(User).filter(User.id == int(userId)).first()
+    if not user or not user.access_token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="GitHub token missing")
+
+    headers = {"Authorization": f"Bearer {user.access_token}"}
+
+    # Fetch all repos (may be paginated, so only take first 100 for simplicity)
+    response = httpx.get(
+        "https://api.github.com/user/repos?per_page=100&sort=updated",
+        headers=headers,
+        timeout=10
+    )
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail="Failed to fetch GitHub repos")
+
+    repos = response.json()
+
+    # Map to minimal structure and sort by stars
+    mapped_repos = [
+        {
+            "name": repo["name"],
+            "stars": repo.get("stargazers_count", 0),
+            "last_push": repo.get("pushed_at"),
+            "language": repo.get("language")
+        }
+        for repo in repos
+    ]
+
+    # Sort descending by stars and take top 5
+    top_repos = sorted(mapped_repos, key=lambda x: x["stars"], reverse=True)[:5]
+
+    return top_repos
