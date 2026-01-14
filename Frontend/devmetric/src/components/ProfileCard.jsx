@@ -2,7 +2,7 @@ import Avatar from "./Avatar";
 import "../styles/profileCard.css";
 import { useState, useEffect } from "react";
 
-function ProfileCard({ avatar_url , bio}) {
+function ProfileCard({ avatar_url , bio, following, followers}) {
   const [username, setUsername] = useState("");
   const [age, setAge] = useState("");
 
@@ -20,9 +20,10 @@ function ProfileCard({ avatar_url , bio}) {
         <h2 className="profile-username">{username || "Unknown User"}</h2>
         <div className="profile-details">
           {age && <span className="profile-age">{age} yrs</span>}
-          {age && <span className="profile-age">{age} Followers</span>}
-          {age && <span className="profile-age">{age} Following</span>}
+          {followers != null && <span className="profile-age">{followers} Followers</span>}
+          {following != null && <span className="profile-age">{following} Following</span>}
         </div>
+
         {bio && <p className="profile-bio">{bio}</p>}
       </div>
     </div>

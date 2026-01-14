@@ -24,15 +24,6 @@ function LoginCard() {
           Continue with GitHub
         </button>
 
-        <p className="login-alt">
-          Already have an account?{" "}
-          <a
-          href="/signup"
-          className="login-link"
-          >
-          Log in here
-            </a>
-        </p>
 
         <p className="login-footnote">
           We only access data you explicitly authorize via GitHub.

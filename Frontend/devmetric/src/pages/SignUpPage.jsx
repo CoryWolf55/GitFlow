@@ -78,7 +78,7 @@ function SignUpPage() {
       username: githubUsername,
       age: data.age ? Number(data.age) : null
     };
-      const res = await axios.post(`${API_URL_BASE}/user/register`, payload);
+      const res = await axios.post(`${API_URL_BASE}/user/register`, payload, {withCredentials: true});
       console.log("Signup success:", res.data);
       const responseData = res.data;
       if(responseData){

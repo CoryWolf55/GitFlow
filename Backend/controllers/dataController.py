@@ -31,15 +31,15 @@ def get_avatar(request: Request, userId: str = Cookie(None), db: Session = Depen
     return {"avatar_url": avatar_url}
 
 
-@router.get("/user/github-bio")
+@router.get("/data/github-stats")
 @limiter.limit("15/minute")
-def get_github_bio(request: Request, userId: str = Cookie(None), db: Session = Depends(get_db)):
+def get_github_stats(request: Request, userId: str = Cookie(None), db: Session = Depends(get_db)):
     if not userId:
         raise HTTPException(status_code=401, detail="Not logged in")
 
     user = db.query(User).filter(User.id == int(userId)).first()
     if not user or not user.access_token:
-        raise HTTPException(status_code=404, detail="User or token not found")
+        raise HTTPException(status_code=401, detail="GitHub token missing")
 
     headers = {"Authorization": f"Bearer {user.access_token}"}
     response = httpx.get("https://api.github.com/user", headers=headers)
@@ -48,4 +48,8 @@ def get_github_bio(request: Request, userId: str = Cookie(None), db: Session = D
         raise HTTPException(status_code=response.status_code, detail="Failed to fetch GitHub profile")
 
     data = response.json()
-    return {"bio": data.get("bio", "")}
+    return {
+        "followers": data.get("followers", 0),
+        "following": data.get("following", 0),
+        "bio": data.get("bio", "")
+    }

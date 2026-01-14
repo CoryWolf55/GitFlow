@@ -67,16 +67,7 @@ def register_user(request: Request, user_dto: UserRegisterDTO,response:Response,
 
         post_commit(user, db)
 
-        # Return JSONResponse so cookie is sent properly
-        response = JSONResponse(content=UserRegisterResponseDTO.model_validate(user).model_dump())
-        response.set_cookie(
-            key="userId",
-            value=str(user.id),
-            httponly=True,
-            secure=False,
-            samesite="lax"
-        )
-        return response
+        return UserRegisterResponseDTO.model_validate(user)
 
     except HTTPException:
         raise
@@ -186,6 +177,17 @@ def github_callback(code: str, db: Session = Depends(get_db)):
 
         #Redirect
         response = RedirectResponse(url=frontend_url)
+
+        # Return JSONResponse so cookie is sent properly
+        response.set_cookie(
+            key="userId",
+            value=str(existing_user.id),
+            httponly=True,
+            samesite="lax",
+            secure=False,
+            path="/"
+        )
+
         return response
     except Exception as e:
         db.rollback()
