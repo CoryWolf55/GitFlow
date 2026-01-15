@@ -96,3 +96,68 @@ def get_top_repos(request: Request, userId: str = Cookie(None), db: Session = De
     top_repos = sorted(mapped_repos, key=lambda x: x["stars"], reverse=True)[:5]
 
     return top_repos
+
+
+@router.get("/data/languages")
+@limiter.limit("10/minute")
+def get_language_usage(
+    request: Request,
+    userId: str = Cookie(None),
+    db: Session = Depends(get_db)
+):
+    if not userId:
+        raise HTTPException(status_code=401, detail="Not logged in")
+
+    user = db.query(User).filter(User.id == int(userId)).first()
+    if not user or not user.access_token:
+        raise HTTPException(status_code=401, detail="GitHub token missing")
+
+    headers = {
+        "Authorization": f"Bearer {user.access_token}",
+        "Accept": "application/vnd.github+json"
+    }
+
+    query = """
+    query {
+      viewer {
+        repositories(first: 100, ownerAffiliations: OWNER) {
+          nodes {
+            languages(first: 20) {
+              edges {
+                size
+                node {
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+
+    response = httpx.post(
+        "https://api.github.com/graphql",
+        headers=headers,
+        json={"query": query},
+        timeout=15
+    )
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Failed to fetch language data"
+        )
+
+    data = response.json()
+
+    repos = data["data"]["viewer"]["repositories"]["nodes"]
+    language_totals = {}
+
+    for repo in repos:
+        for lang in repo["languages"]["edges"]:
+            name = lang["node"]["name"]
+            size = lang["size"]
+            language_totals[name] = language_totals.get(name, 0) + size
+
+    return language_totals

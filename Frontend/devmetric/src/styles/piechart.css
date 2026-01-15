@@ -1,0 +1,46 @@
+/* Container for the pie chart */
+.piechart-container {
+  background-color: #1e293b; /* Dark card background */
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  color: #e5e7eb; /* Light text */
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 500px;
+}
+
+/* Header/title */
+.piechart-container h3 {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f0f9ff;
+}
+
+/* Empty state when there is no data */
+.piechart-empty {
+  font-size: 1rem;
+  color: #94a3b8;
+  padding: 2rem;
+}
+
+/* Optional: make tooltip text more readable */
+.recharts-tooltip-wrapper {
+  background-color: #111827 !important;
+  color: #f1f5f9 !important;
+  font-size: 0.85rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* Optional: adjust legend */
+.recharts-legend-wrapper {
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}

@@ -6,6 +6,8 @@ import NavBar from "../components/NavBar";
 import Loading from "../components/Loading";
 import ProfileCard from "../components/ProfileCard";
 import ScoreCard from "../components/ScoreCard";
+import ReposCard from "../components/ReposCard";
+import PieChart from "../components/PieChart";
 
 function Dashboard() {
   const [loading, setLoading] = useState([0, "Analyzing your GitHub data…"]);
@@ -16,6 +18,8 @@ function Dashboard() {
   const [bio, setBio] = useState("");
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
+  const [repos, setRepos] = useState([]);
+  const [languages, setLanguages] = useState({});
 
   /*** Loading helper ***/
   const updateLoadingBar = (message) => {
@@ -60,14 +64,30 @@ function Dashboard() {
       const res = await axios.get(`${API_URL_BASE}/data/top-repos`, { withCredentials: true });
       console.log("Top 5 Repos:", res.data.slice(0, 5));
       updateLoadingBar("Found your repositories!");
+      setRepos(res.data.slice(0, 5));
     } catch (err) {
       console.error("Error fetching top repos:", err);
       setLoading([100, "Error Loading Repos"]);
     }
   };
 
+  const fetchLanguages = async () => {
+    try {
+      setLoading([loading[0], "Fetching Top Languages"]);
+      const res = await axios.get(`${API_URL_BASE}/data/languages`, {
+      withCredentials: true
+      });
+      console.log("Top Languages", res.data);
+      updateLoadingBar("Found your Top Languages!");
+      setLanguages(res.data);
+    } catch (err) {
+      console.error("Error fetching Languages:", err);
+      setLoading([100, "Error Loading Languages"]);
+    }
+  };
+
   /*** List of functions for dynamic loading ***/
-  const fetchFunctions = [fetchAvatar, fetchDetails, fetchTopRepos];
+  const fetchFunctions = [fetchAvatar, fetchDetails, fetchTopRepos, fetchLanguages];
 
   /*** Run all fetches on mount ***/
   useEffect(() => {
@@ -99,9 +119,11 @@ function Dashboard() {
             followers={followers}
           />
           <ScoreCard score={72} />
+          <ReposCard topRepos={repos}/>
         </div>
 
         <div className="middle-row">{/* GitHub Activity cards here */}</div>
+        <PieChart data={languages}/>
         <div className="bottom-row">{/* Percentile / metrics cards here */}</div>
       </div>
     </div>
