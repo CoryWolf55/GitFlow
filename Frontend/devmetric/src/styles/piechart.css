@@ -1,46 +1,86 @@
 /* Container for the pie chart */
 .piechart-container {
-  background-color: #1e293b; /* Dark card background */
-  border-radius: 1rem;
-  padding: 1rem 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(145deg, var(--bg-card), var(--bg-card-hover));
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-md);
   text-align: center;
-  color: #e5e7eb; /* Light text */
-  margin: 1rem 0;
+  color: var(--text-primary);
+  margin: var(--spacing-md) 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 500px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-base), 
+              box-shadow var(--transition-base), 
+              border-color var(--transition-base);
+  animation: fadeUp 0.6s ease-out 0.4s both;
+}
+
+.piechart-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--primary), var(--accent-violet));
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.piechart-container:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow-hover), var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.piechart-container:hover::before {
+  opacity: 1;
 }
 
 /* Header/title */
 .piechart-container h3 {
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #f0f9ff;
+  margin-bottom: var(--spacing-xl);
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.01em;
 }
 
 /* Empty state when there is no data */
 .piechart-empty {
   font-size: 1rem;
-  color: #94a3b8;
-  padding: 2rem;
+  color: var(--text-secondary);
+  padding: var(--spacing-2xl);
+  text-align: center;
+  background: linear-gradient(145deg, var(--bg-card), var(--bg-card-hover));
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  width: 100%;
 }
 
 /* Optional: make tooltip text more readable */
 .recharts-tooltip-wrapper {
-  background-color: #111827 !important;
-  color: #f1f5f9 !important;
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
   font-size: 0.85rem;
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-default);
 }
 
 /* Optional: adjust legend */
 .recharts-legend-wrapper {
-  color: #e5e7eb;
+  color: var(--text-primary);
   font-size: 0.9rem;
-  margin-top: 0.5rem;
+  margin-top: var(--spacing-sm);
 }

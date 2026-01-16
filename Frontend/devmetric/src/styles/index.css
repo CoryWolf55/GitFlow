@@ -1,23 +1,67 @@
 /* =========================
-   DevMetric – Base Styles
+   DevMetric – Base Styles & Design System
    ========================= */
 
-/* CSS Variables */
+/* CSS Variables - Design System */
 :root {
+  /* Background Colors */
   --bg-main: #020617;
   --bg-card: #1e293b;
+  --bg-card-hover: #0f172a;
+  --bg-input: #0f172a;
+  --bg-overlay: rgba(8, 10, 14, 0.85);
 
+  /* Primary Colors */
   --primary: #3b82f6;
   --primary-hover: #2563eb;
+  --primary-light: #60a5fa;
   --accent-cyan: #22d3ee;
   --accent-violet: #8b5cf6;
+  --accent-sky: #38bdf8;
 
+  /* Text Colors */
   --text-primary: #e5e7eb;
   --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-light: #f9fafb;
 
+  /* Status Colors */
   --success: #22c55e;
   --warning: #f59e0b;
   --error: #ef4444;
+
+  /* Border Colors */
+  --border-default: #1e293b;
+  --border-light: rgba(148, 163, 184, 0.1);
+  --border-medium: rgba(148, 163, 184, 0.25);
+
+  /* Spacing Scale */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* Border Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-full: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 40px rgba(59, 130, 246, 0.15);
+  --shadow-glow-cyan: 0 0 40px rgba(34, 211, 238, 0.15);
+  --shadow-glow-hover: 0 12px 30px rgba(59, 130, 246, 0.4);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
 }
 
 /* CSS Reset */
@@ -30,11 +74,24 @@
 /* Base Page */
 html,
 body {
-  height: 100%;
+  min-height: 100%;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
-  background-color: var(--bg-main);
   color: var(--text-primary);
+
+  /* DevMetric layered background */
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(59, 130, 246, 0.12),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(34, 211, 238, 0.08),
+      transparent 45%
+    ),
+    linear-gradient(180deg, var(--bg-main), var(--bg-main));
 }
 
 /* Root (React Mount) */
@@ -79,12 +136,23 @@ button:active {
   transform: scale(0.98);
 }
 
-/* Cards */
+/* Cards - Base Card Style */
 .card {
   background-color: var(--bg-card);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-base), 
+              box-shadow var(--transition-base), 
+              border-color var(--transition-base),
+              background-color var(--transition-base);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
 }
 
 /* Text Utilities */
@@ -102,42 +170,22 @@ button:active {
 
 /* Scrollbar (optional but clean) */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--bg-card);
-  border-radius: 4px;
+  background: linear-gradient(180deg, var(--primary), var(--accent-cyan));
+  border-radius: var(--radius-full);
+  border: 2px solid var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--primary-hover), var(--accent-cyan));
 }
 
 ::-webkit-scrollbar-track {
   background-color: var(--bg-main);
 }
 
-html,
-body {
-  min-height: 100%;
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
-  color: var(--text-primary);
-
-  /* Layered background */
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(59, 130, 246, 0.12),
-      transparent 40%
-    ),
-    radial-gradient(
-      circle at bottom left,
-      rgba(34, 211, 238, 0.08),
-      transparent 45%
-    ),
-    linear-gradient(
-      180deg,
-      #020617 0%,
-      #020617 100%
-    );
-}
 
 

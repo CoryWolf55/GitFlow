@@ -4,11 +4,11 @@ import "../styles/scorecard.css";
 function ScoreCard({ score = 100, maxScore = 100 }) {
   const percentage = (score / maxScore) * 100;
 
-  // Determine color based on score
+  // Determine color based on score - using design system colors
   let strokeColor;
-  if (score / maxScore < 0.4) strokeColor = "#f87171"; // red
-  else if (score / maxScore < 0.7) strokeColor = "#facc15"; // yellow
-  else strokeColor = "#38bdf8"; // blue
+  if (score / maxScore < 0.4) strokeColor = "#ef4444"; // error red
+  else if (score / maxScore < 0.7) strokeColor = "#f59e0b"; // warning yellow
+  else strokeColor = "#38bdf8"; // accent sky blue
 
   return (
     <div className="score-card">

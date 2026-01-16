@@ -1,39 +1,130 @@
+/* Dashboard Page Header */
+.dashboard-header {
+  padding: var(--spacing-2xl) var(--spacing-2xl) var(--spacing-xl);
+  max-width: 1440px;
+  margin: 0 auto;
+  animation: fadeUp 0.6s ease-out both;
+}
+
+.dashboard-title {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: var(--spacing-sm);
+  letter-spacing: -0.02em;
+}
+
+.dashboard-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* Dashboard Grid */
 .dashboard-grid {
   display: grid;
-  grid-template-rows: auto auto auto; /* 3 rows */
-  gap: 24px; /* spacing between rows */
-  padding: 40px; /* space from edges */
-  max-width: 1500px;
+  gap: var(--spacing-2xl);
+  padding: 0 var(--spacing-2xl) var(--spacing-2xl);
+  max-width: 1440px;
   margin: 0 auto;
 }
 
-/* Top row: Profile left, Score right */
 .top-row {
   display: grid;
-  grid-template-columns: 1fr 220px; /* left flexible, right fixed */
-  gap: 20px;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-xl);
   align-items: start;
 }
 
-/* Make it responsive: stack vertically on narrow screens */
-@media (max-width: 768px) {
-  .top-row {
-    grid-template-columns: 1fr; /* single column */
-  }
-
-  .top-row > :nth-child(2) {
-    justify-self: start; /* score card aligns left when stacked */
-  }
+.top-row-right {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
 }
 
 .middle-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--spacing-xl);
 }
 
 .bottom-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-wrapper {
+  min-height: 100vh;
+  background: 
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 40%),
+    radial-gradient(circle at bottom left, rgba(34, 211, 238, 0.06), transparent 45%),
+    linear-gradient(180deg, var(--bg-main), var(--bg-main));
+}
+
+@media (max-width: 1200px) {
+  .top-row {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+  
+  .top-row-right {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xl);
+  }
+}
+
+@media (max-width: 768px) {
+  .top-row {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+  
+  .top-row-right {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+  
+  .middle-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .bottom-row {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+  
+  .dashboard-grid {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+    gap: var(--spacing-lg);
+  }
+  
+  .dashboard-header {
+    padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-grid {
+    padding: 0 var(--spacing-md) var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+  
+  .dashboard-header {
+    padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+  }
 }

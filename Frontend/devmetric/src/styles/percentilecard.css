@@ -1,0 +1,114 @@
+.percentile-card {
+  background: linear-gradient(145deg, var(--bg-card), var(--bg-card-hover));
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-base), 
+              box-shadow var(--transition-base), 
+              border-color var(--transition-base);
+  animation: fadeUp 0.6s ease-out 0.5s both;
+  width: 100%;
+}
+
+.percentile-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--primary), var(--accent-violet));
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.percentile-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow-hover), var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.percentile-card:hover::before {
+  opacity: 1;
+}
+
+.percentile-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: var(--spacing-xs);
+  letter-spacing: -0.01em;
+}
+
+.percentile-subtitle {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xl);
+}
+
+.percentile-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.percentile-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.percentile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.percentile-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.percentile-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.percentile-bar-container {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-main);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.percentile-bar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 1s ease;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.percentile-description {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

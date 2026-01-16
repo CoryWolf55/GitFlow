@@ -16,9 +16,9 @@
   align-items: center;
   justify-content: space-between;
   height: 64px;
-  padding: 0 2rem;
-  background: linear-gradient(135deg, #0f172a, #020617);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding: 0 var(--spacing-2xl);
+  background: linear-gradient(135deg, var(--bg-card-hover), var(--bg-main));
+  border-bottom: 1px solid var(--border-light);
   animation: navbarEnter 0.6s ease-out 0.15s both;
   position: relative;
   z-index: 100;
@@ -30,7 +30,11 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(34,211,238,0.05), rgba(139,92,246,0.05), rgba(59,130,246,0.1));
+  background: linear-gradient(135deg, 
+    rgba(59,130,246,0.1), 
+    rgba(34,211,238,0.05), 
+    rgba(139,92,246,0.05), 
+    rgba(59,130,246,0.1));
   background-size: 300% 300%;
   border-radius: inherit;
   z-index: -1;
@@ -41,18 +45,21 @@
 .navbar-left .logo {
   font-size: 1.35rem;
   font-weight: 700;
-  color: #e5e7eb;
+  color: var(--text-primary);
   letter-spacing: -0.5px;
-  transition: color 0.3s ease, transform 0.2s ease, background 2s linear;
+  transition: color var(--transition-slow), 
+              transform var(--transition-base), 
+              background 2s linear;
   cursor: pointer;
 }
 
 .navbar-left .logo:hover {
-  color: #22d3ee;
+  color: var(--accent-cyan);
   transform: translateY(-1px);
-  background: linear-gradient(135deg, #22d3ee, #3b82f6, #8b5cf6);
+  background: linear-gradient(135deg, var(--accent-cyan), var(--primary), var(--accent-violet));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Links */
@@ -72,13 +79,13 @@
   position: relative;
   font-size: 0.95rem;
   font-weight: 500;
-  color: #94a3b8;
-  padding: 0.25rem 0;
-  transition: color 0.25s ease;
+  color: var(--text-secondary);
+  padding: var(--spacing-xs) 0;
+  transition: color var(--transition-base);
 }
 
 .nav-links a:hover {
-  color: #e5e7eb;
+  color: var(--text-primary);
 }
 
 .nav-links a::after {
@@ -88,8 +95,8 @@
   bottom: -6px;
   width: 0%;
   height: 2px;
-  background: linear-gradient(90deg, #22d3ee, #3b82f6, #8b5cf6);
-  transition: width 0.35s ease;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--primary), var(--accent-violet));
+  transition: width var(--transition-slow);
 }
 
 .nav-links a:hover::after {
@@ -104,15 +111,17 @@
 }
 
 .button {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: var(--text-light);
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 0.6rem 1.25rem;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.25s ease, background-position 3s ease;
+  transition: transform var(--transition-fast), 
+              box-shadow var(--transition-base), 
+              background-position 3s ease;
   background-size: 200% 200%; /* for gradient movement */
 }
 

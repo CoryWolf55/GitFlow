@@ -1,9 +1,16 @@
 import { PieChart as RechartPieChart, Pie, Cell, Legend, ResponsiveContainer } from "recharts";
 import "../styles/piechart.css";
 
+// Colors matching the DevMetric design system
 const COLORS = [
-  "#0088FE", "#00C49F", "#FFBB28", "#FF8042",
-  "#A28BFF", "#FF6699", "#FF6666", "#33CCFF"
+  "#3b82f6", // primary blue
+  "#22d3ee", // accent cyan
+  "#8b5cf6", // accent violet
+  "#38bdf8", // accent sky
+  "#22c55e", // success green
+  "#f59e0b", // warning yellow
+  "#f97316", // orange
+  "#ec4899"  // pink
 ];
 
 function PieChart({ data }) {
@@ -27,10 +34,13 @@ function PieChart({ data }) {
             nameKey="name"
             cx="50%"
             cy="50%"
-            outerRadius={100}
+            outerRadius={110}
+            innerRadius={40}
             fill="#8884d8"
-            label={(entry) => entry.name}
-            isAnimationActive={false} // optional, stops animation on click
+            label={false}
+            isAnimationActive={true}
+            animationBegin={0}
+            animationDuration={800}
           >
             {chartData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

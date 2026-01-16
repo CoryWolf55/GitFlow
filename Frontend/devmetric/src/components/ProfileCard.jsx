@@ -1,5 +1,5 @@
 import Avatar from "./Avatar";
-import "../styles/profileCard.css";
+import "../styles/profilecard.css";
 import { useState, useEffect } from "react";
 
 function ProfileCard({ avatar_url , bio, following, followers}) {

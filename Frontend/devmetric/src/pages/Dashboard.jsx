@@ -8,6 +8,9 @@ import ProfileCard from "../components/ProfileCard";
 import ScoreCard from "../components/ScoreCard";
 import ReposCard from "../components/ReposCard";
 import PieChart from "../components/PieChart";
+import StatsSummary from "../components/StatsSummary";
+import PercentileCard from "../components/PercentileCard";
+import ContributionsHeatmap from "../components/ContributionsHeatmap";
 
 function Dashboard() {
   const [loading, setLoading] = useState([0, "Analyzing your GitHub data…"]);
@@ -20,6 +23,9 @@ function Dashboard() {
   const [following, setFollowing] = useState(0);
   const [repos, setRepos] = useState([]);
   const [languages, setLanguages] = useState({});
+  const [stats, setStats] = useState(null);
+  const [percentiles, setPercentiles] = useState(null);
+  const [contributions, setContributions] = useState([]);
 
   /*** Loading helper ***/
   const updateLoadingBar = (message) => {
@@ -86,6 +92,38 @@ function Dashboard() {
     }
   };
 
+  const fetchStats = async () => {
+    try {
+      // Calculate total stars from repos
+      const totalStars = repos.reduce((sum, repo) => sum + (repo.stars || 0), 0);
+      
+      // Mock stats for now - replace with actual API call later
+      setStats({
+        totalCommits: 1247,
+        totalPRs: 89,
+        totalStars: totalStars || 342,
+        totalForks: 156,
+        repoCount: repos.length || 24
+      });
+    } catch (err) {
+      console.error("Error fetching stats:", err);
+    }
+  };
+
+  const fetchPercentiles = async () => {
+    try {
+      // Mock percentiles for now - replace with actual API call later
+      setPercentiles({
+        overall: 72,
+        repos: 65,
+        commits: 78,
+        languages: 70
+      });
+    } catch (err) {
+      console.error("Error fetching percentiles:", err);
+    }
+  };
+
   /*** List of functions for dynamic loading ***/
   const fetchFunctions = [fetchAvatar, fetchDetails, fetchTopRepos, fetchLanguages];
 
@@ -97,6 +135,14 @@ function Dashboard() {
     fetchAll();
   }, []);
 
+  /*** Fetch stats and percentiles after repos load ***/
+  useEffect(() => {
+    if (repos.length > 0) {
+      fetchStats();
+      fetchPercentiles();
+    }
+  }, [repos]);
+
   /*** Hide loading when complete ***/
   useEffect(() => {
     if (loading[0] >= 100) {
@@ -106,9 +152,14 @@ function Dashboard() {
   }, [loading[0]]);
 
   return (
-    <div>
+    <div className="dashboard-wrapper">
       <NavBar />
       {showLoading && <Loading progress={loading[0]} label={loading[1]} />}
+
+      <div className="dashboard-header">
+        <h1 className="dashboard-title">Your Dashboard</h1>
+        <p className="dashboard-subtitle">Comprehensive insights into your GitHub activity and performance</p>
+      </div>
 
       <div className="dashboard-grid">
         <div className="top-row">
@@ -118,13 +169,20 @@ function Dashboard() {
             following={following}
             followers={followers}
           />
-          <ScoreCard score={72} />
-          <ReposCard topRepos={repos}/>
+          <div className="top-row-right">
+            <ScoreCard score={72} />
+            <ReposCard topRepos={repos}/>
+          </div>
         </div>
 
-        <div className="middle-row">{/* GitHub Activity cards here */}</div>
-        <PieChart data={languages}/>
-        <div className="bottom-row">{/* Percentile / metrics cards here */}</div>
+        <div className="middle-row">
+          <PieChart data={languages}/>
+          <ContributionsHeatmap contributions={contributions}/>
+        </div>
+        <div className="bottom-row">
+          <StatsSummary stats={stats}/>
+          <PercentileCard percentiles={percentiles}/>
+        </div>
       </div>
     </div>
   );

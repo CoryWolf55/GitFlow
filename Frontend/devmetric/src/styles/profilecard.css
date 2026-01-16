@@ -1,13 +1,42 @@
 .profile-card {
   display: flex;
   align-items: flex-start;
-  background: #1f2937; /* dark gray background */
-  border-radius: 16px;
-  padding: 16px 20px;
-  gap: 16px;
-  width: 420px;
-  color: #f9fafb;
-  border: 1px solid #374151; /* subtle border for separation */
+  background: linear-gradient(145deg, var(--bg-card), var(--bg-card-hover));
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  gap: var(--spacing-lg);
+  width: 100%;
+  color: var(--text-light);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-base), 
+              box-shadow var(--transition-base), 
+              border-color var(--transition-base);
+  animation: fadeUp 0.6s ease-out 0.1s both;
+}
+
+.profile-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--primary), var(--accent-violet));
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.profile-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow-hover), var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.profile-card:hover::before {
+  opacity: 1;
 }
 
 .profile-info {
@@ -18,28 +47,45 @@
 }
 
 .profile-username {
-  font-size: 20px;
-  font-weight: 600;
-  color: #38bdf8; /* DevMetric blue accent */
-  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-sky), var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 var(--spacing-xs) 0;
+  letter-spacing: -0.01em;
 }
 
 .profile-details {
   display: flex;
-  gap: 5px;
-  font-size: 14px;
-  color: #9ca3af; /* muted gray for secondary info */
+  gap: var(--spacing-sm);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
 }
 
 .profile-age {
-  background: #111827; /* slightly darker badge background */
-  padding: 4px 8px;
-  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(34, 211, 238, 0.1));
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  color: var(--accent-sky);
+  transition: all var(--transition-base);
+}
+
+.profile-age:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(34, 211, 238, 0.15));
+  border-color: rgba(59, 130, 246, 0.4);
+  transform: translateY(-1px);
 }
 
 .profile-bio {
-  font-size: 14px;
-  color: #d1d5db; /* slightly lighter than details for readability */
-  margin: 4px 0 0 0;
-  line-height: 1.4;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  margin: var(--spacing-md) 0 0 0;
+  line-height: 1.6;
+  font-weight: 400;
 }

@@ -1,19 +1,57 @@
 .repos-card {
-  background: #1f2937;
-  border-radius: 16px;
-  padding: 16px;
-  color: #f9fafb;
+  background: linear-gradient(145deg, var(--bg-card), var(--bg-card-hover));
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  color: var(--text-light);
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  margin-bottom: 20px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-default);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-base), 
+              box-shadow var(--transition-base), 
+              border-color var(--transition-base);
+  animation: fadeUp 0.6s ease-out 0.3s both;
+}
+
+.repos-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--primary), var(--accent-violet));
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.repos-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow-hover), var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.repos-card:hover::before {
+  opacity: 1;
 }
 
 .repos-card h3 {
-  margin-bottom: 12px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #e5e7eb;
+  margin-bottom: var(--spacing-xl);
+  font-size: 1.35rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.01em;
+}
+
+.repos-card p {
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  text-align: center;
+  padding: var(--spacing-xl) 0;
 }
 
 .repos-card ul {
@@ -25,19 +63,53 @@
 .repo-item {
   display: flex;
   justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #374151;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-md);
+  margin: 0 calc(-1 * var(--spacing-md));
+  border-radius: var(--radius-sm);
+  border-bottom: 1px solid var(--border-default);
+  gap: var(--spacing-md);
+  transition: background-color var(--transition-base), 
+              transform var(--transition-base);
 }
 
 .repo-item:last-child {
   border-bottom: none;
 }
 
+.repo-item:hover {
+  background: rgba(59, 130, 246, 0.05);
+  transform: translateX(4px);
+}
+
 .repo-name {
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .repo-stats {
-  font-size: 0.8rem;
-  color: #9ca3af;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  font-weight: 500;
+}
+
+.repo-stat-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 0.8125rem;
+}
+
+.repo-stat-item i {
+  font-size: 0.75rem;
 }
