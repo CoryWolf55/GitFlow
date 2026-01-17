@@ -25,6 +25,17 @@ function ProfileCard({ avatar_url , bio, following, followers}) {
         </div>
 
         {bio && <p className="profile-bio">{bio}</p>}
+        
+        {username && (
+          <a 
+            href={`https://github.com/${username}`} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="profile-github-link"
+          >
+            github.com/{username}
+          </a>
+        )}
       </div>
     </div>
   );

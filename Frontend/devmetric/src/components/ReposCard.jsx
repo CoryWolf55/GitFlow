@@ -1,8 +1,16 @@
 // Repos.jsx
+import { useEffect, useState } from "react";
 import "../styles/repos.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function Repos({ topRepos }) {
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const u = localStorage.getItem("username");
+    if (u) setUsername(u);
+  }, []);
+
   if (!topRepos || topRepos.length === 0) {
     return (
       <div className="repos-card">
@@ -18,7 +26,14 @@ function Repos({ topRepos }) {
       <ul>
         {topRepos.map((repo) => (
           <li key={repo.name} className="repo-item">
-            <div className="repo-name">{repo.name}</div>
+            <a 
+              href={`https://github.com/${username}/${repo.name}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="repo-name"
+            >
+              {repo.name}
+            </a>
             <div className="repo-stats">
               <span className="repo-stat-item">
                 <i className="fa-solid fa-star" style={{color: '#fbbf24'}}></i>

@@ -4,7 +4,7 @@
   border: 1px solid var(--border-default);
   border-radius: var(--radius-xl);
   padding: var(--spacing-2xl);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   text-align: center;
   color: var(--text-primary);
   margin: var(--spacing-md) 0;
@@ -14,32 +14,51 @@
   width: 100%;
   position: relative;
   overflow: hidden;
-  transition: transform var(--transition-base), 
-              box-shadow var(--transition-base), 
-              border-color var(--transition-base);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color var(--transition-base);
   animation: fadeUp 0.6s ease-out 0.4s both;
 }
 
 .piechart-container::before {
   content: "";
   position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 30%, rgba(34, 211, 238, 0.05) 50%, transparent 70%);
+  animation: cardGlimmer 6s infinite;
+  pointer-events: none;
+}
+
+.piechart-container::after {
+  content: "";
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent-cyan), var(--primary), var(--accent-violet));
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.5), transparent);
   opacity: 0;
   transition: opacity var(--transition-base);
 }
 
 .piechart-container:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-glow-hover), var(--shadow-lg);
-  border-color: var(--primary);
+  transform: translateY(-12px);
+  box-shadow: 0 30px 80px rgba(34, 211, 238, 0.2), 0 0 30px rgba(34, 211, 238, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(34, 211, 238, 0.5);
 }
 
-.piechart-container:hover::before {
+.piechart-container:hover::after {
   opacity: 1;
+}
+
+@keyframes cardGlimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
 }
 
 /* Header/title */

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/dashboard.css";
 import axios from "axios";
 import { API_URL_BASE } from "../config";
@@ -12,7 +13,9 @@ import StatsSummary from "../components/StatsSummary";
 import PercentileCard from "../components/PercentileCard";
 import ContributionsHeatmap from "../components/ContributionsHeatmap";
 
+
 function Dashboard() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState([0, "Analyzing your GitHub data…"]);
   const [showLoading, setShowLoading] = useState(true);
   const [loadingCount, setLoadingCount] = useState(0);
@@ -37,6 +40,11 @@ function Dashboard() {
 });
   };
 
+  const loggedOut = () => {
+    setLoading(0, "Please log in again.");
+    navigate("/login");
+  }
+
   /*** Fetch functions ***/
   const fetchAvatar = async () => {
     try {
@@ -46,7 +54,7 @@ function Dashboard() {
       updateLoadingBar("Found your avatar!");
     } catch (err) {
       console.error("Error fetching avatar:", err);
-      setLoading([100, "Error Loading Avatar"]);
+     loggedOut();
     }
   };
 
@@ -60,7 +68,7 @@ function Dashboard() {
       updateLoadingBar("Details Found!");
     } catch (err) {
       console.error("Error fetching details:", err);
-      setLoading([100, "Error Loading Details"]);
+       loggedOut();
     }
   };
 
@@ -73,7 +81,7 @@ function Dashboard() {
       setRepos(res.data.slice(0, 5));
     } catch (err) {
       console.error("Error fetching top repos:", err);
-      setLoading([100, "Error Loading Repos"]);
+       loggedOut();
     }
   };
 
@@ -88,13 +96,14 @@ function Dashboard() {
       setLanguages(res.data);
     } catch (err) {
       console.error("Error fetching Languages:", err);
-      setLoading([100, "Error Loading Languages"]);
+       loggedOut();
     }
   };
 
   const fetchStats = async () => {
     try {
       // Calculate total stars from repos
+      setLoading([loading[0], "Calculating Stats..."]);
       const totalStars = repos.reduce((sum, repo) => sum + (repo.stars || 0), 0);
       
       // Mock stats for now - replace with actual API call later
@@ -107,11 +116,13 @@ function Dashboard() {
       });
     } catch (err) {
       console.error("Error fetching stats:", err);
+       loggedOut();
     }
   };
 
   const fetchPercentiles = async () => {
     try {
+      setLoading([loading[0], "Calculating Percentiles..."]);
       // Mock percentiles for now - replace with actual API call later
       setPercentiles({
         overall: 72,
@@ -121,11 +132,12 @@ function Dashboard() {
       });
     } catch (err) {
       console.error("Error fetching percentiles:", err);
+       loggedOut();
     }
   };
 
   /*** List of functions for dynamic loading ***/
-  const fetchFunctions = [fetchAvatar, fetchDetails, fetchTopRepos, fetchLanguages];
+  const fetchFunctions = [fetchAvatar, fetchDetails, fetchTopRepos, fetchLanguages, fetchStats, fetchPercentiles];
 
   /*** Run all fetches on mount ***/
   useEffect(() => {
@@ -153,8 +165,8 @@ function Dashboard() {
 
   return (
     <div className="dashboard-wrapper">
-      <NavBar />
       {showLoading && <Loading progress={loading[0]} label={loading[1]} />}
+      <NavBar />
 
       <div className="dashboard-header">
         <h1 className="dashboard-title">Your Dashboard</h1>
@@ -162,6 +174,8 @@ function Dashboard() {
       </div>
 
       <div className="dashboard-grid">
+        <ScoreCard score={72} percentiles={percentiles} />
+        
         <div className="top-row">
           <ProfileCard
             avatar_url={avatarURL}
@@ -169,10 +183,7 @@ function Dashboard() {
             following={following}
             followers={followers}
           />
-          <div className="top-row-right">
-            <ScoreCard score={72} />
-            <ReposCard topRepos={repos}/>
-          </div>
+          <ReposCard topRepos={repos}/>
         </div>
 
         <div className="middle-row">
