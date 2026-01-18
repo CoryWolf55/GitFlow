@@ -1,7 +1,13 @@
 from fastapi import Request, Depends, HTTPException, APIRouter, Cookie
 from sqlalchemy.orm import Session
 from starlette import status
+import base64
+
+"""MODELS"""
 from models.user import User
+from models.github_stats import GitHubStats
+from models.user_score import UserScore
+
 from dependencies import get_db
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -98,6 +104,7 @@ def get_top_repos(request: Request, userId: str = Cookie(None), db: Session = De
     return top_repos
 
 
+
 @router.get("/data/languages")
 @limiter.limit("10/minute")
 def get_language_usage(
@@ -161,3 +168,105 @@ def get_language_usage(
             language_totals[name] = language_totals.get(name, 0) + size
 
     return language_totals
+
+
+
+@router.get("/data/heatmap")
+@limiter.limit("10/minute")
+def get_contributions_heatmap(
+    request: Request,
+    userId: str = Cookie(None),
+    db: Session = Depends(get_db)
+):
+    if not userId:
+        raise HTTPException(status_code=401, detail="Not logged in")
+
+    user = db.query(User).filter(User.id == int(userId)).first()
+    if not user or not user.access_token:
+        raise HTTPException(status_code=401, detail="GitHub token missing")
+
+    headers = {
+        "Authorization": f"Bearer {user.access_token}",
+        "Accept": "application/vnd.github+json"
+    }
+
+    query = """
+    query {
+      viewer {
+        contributionsCollection {
+          contributionCalendar {
+            weeks {
+              contributionDays {
+                date
+                contributionCount
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+
+    response = httpx.post(
+        "https://api.github.com/graphql",
+        headers=headers,
+        json={"query": query},
+        timeout=15
+    )
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail="Failed to fetch contributions data")
+
+    data = response.json()
+
+    try:
+        weeks = data["data"]["viewer"]["contributionsCollection"]["contributionCalendar"]["weeks"]
+        heatmap = []
+        for week in weeks:
+            for day in week["contributionDays"]:
+                heatmap.append({
+                    "date": day["date"],
+                    "count": day["contributionCount"]
+                })
+        return heatmap
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Failed to parse contributions data")
+
+
+@router.get("/data/personal-readme")
+@limiter.limit("10/minute")
+def get_personal_readme_repo(
+    request: Request,
+    userId: str = Cookie(None),
+    db: Session = Depends(get_db)
+):
+    if not userId:
+        raise HTTPException(status_code=401, detail="Not logged in")
+
+    user = db.query(User).filter(User.id == int(userId)).first()
+    if not user or not user.access_token or not user.username:
+        raise HTTPException(status_code=401, detail="GitHub token or username missing")
+
+    headers = {
+        "Authorization": f"Bearer {user.access_token}",
+        "Accept": "application/vnd.github+json"
+    }
+
+    url = f"https://api.github.com/repos/{user.username}/{user.username}/readme"
+
+    try:
+        response = httpx.get(url, headers=headers, timeout=10)
+    except httpx.RequestError as e:
+        print("HTTPX network error:", e)
+        raise HTTPException(status_code=500, detail="Failed to reach GitHub API")
+
+    if response.status_code == 404:
+        return {"description": "", "exists": False}  # safe fallback
+    if response.status_code != 200:
+        print("GitHub API error:", response.text)
+        raise HTTPException(status_code=response.status_code, detail="Failed to fetch repo")
+
+    data = response.json()
+    content = base64.b64decode(data["content"]).decode("utf-8")
+
+    return {"exists": True, "content": content}

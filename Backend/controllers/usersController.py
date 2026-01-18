@@ -13,7 +13,10 @@ from dotenv import load_dotenv
 
 from dependencies import get_db
 
+"""MODELS"""
 from models.user import User
+from models.github_stats import GitHubStats
+from models.user_score import UserScore
 
 from slowapi import Limiter
 from slowapi.util import get_remote_address

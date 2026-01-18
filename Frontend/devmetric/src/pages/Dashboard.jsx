@@ -13,6 +13,13 @@ import StatsSummary from "../components/StatsSummary";
 import PercentileCard from "../components/PercentileCard";
 import ContributionsHeatmap from "../components/ContributionsHeatmap";
 
+// TO DO: 
+//  Add error handling for API calls
+//  Replace mock data with real API responses
+//  Add usernames readme link in ProfileCard, if none then ignore
+
+//Possible age ranges: "13-17", "18-21", "22-25", "25-34", "35-44", "45-54", "55-64", "65+"
+
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -29,6 +36,7 @@ function Dashboard() {
   const [stats, setStats] = useState(null);
   const [percentiles, setPercentiles] = useState(null);
   const [contributions, setContributions] = useState([]);
+  const [personalREADME, setPersonalREADME] = useState(null);
 
   /*** Loading helper ***/
   const updateLoadingBar = (message) => {
@@ -136,8 +144,50 @@ function Dashboard() {
     }
   };
 
+  const fetchHeatMap = async () => {
+    try {
+      setLoading([loading[0], "Fetching Contribution Heatmap..."]);
+
+      const res = await axios.get(`${API_URL_BASE}/data/heatmap`, {
+      withCredentials: true
+      });
+      setContributions(res.data);
+      console.log("Heatmap Data:", res.data);
+      updateLoadingBar("Contribution Heatmap Loaded!");
+    } catch (err) {
+      console.error("Error fetching Heatmap:", err);
+       loggedOut();
+    }
+  };
+
+  const checkPersonalREADME = async () => {
+    try {
+      setLoading([loading[0], "Finding Personal README..."]);
+
+      const res = await axios.get(`${API_URL_BASE}/data/personal-readme`, {
+      withCredentials: true
+      });
+      if(res.data.exists)
+      {
+        setPersonalREADME(res.data.content);
+      }
+      else
+      {
+        setPersonalREADME(null);
+      }
+      
+      console.log("Personal README:", res.data);
+      updateLoadingBar("Found Personal README!");
+    } catch (err) {
+      console.error("Error fetching Personal README:", err);
+       loggedOut();
+    }
+  };
+
   /*** List of functions for dynamic loading ***/
-  const fetchFunctions = [fetchAvatar, fetchDetails, fetchTopRepos, fetchLanguages, fetchStats, fetchPercentiles];
+  const fetchFunctions = [fetchAvatar, fetchDetails, fetchTopRepos, fetchLanguages, 
+    fetchStats, fetchPercentiles, fetchHeatMap,
+    checkPersonalREADME];
 
   /*** Run all fetches on mount ***/
   useEffect(() => {
@@ -182,6 +232,7 @@ function Dashboard() {
             bio={bio}
             following={following}
             followers={followers}
+            personalREADME={personalREADME}
           />
           <ReposCard topRepos={repos}/>
         </div>

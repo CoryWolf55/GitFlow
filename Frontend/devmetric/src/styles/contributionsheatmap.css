@@ -92,23 +92,29 @@
   gap: var(--spacing-sm);
 }
 
+.heatmap-content-wrapper {
+  display: block;
+  padding-right: var(--spacing-lg);
+}
+
 .heatmap-months {
-  display: flex;
+  display: grid;
   gap: var(--spacing-xs);
-  padding-left: 20px;
+  padding-left: 0px;
   font-size: 0.75rem;
   color: var(--text-secondary);
+  width: 100%;
 }
 
 .heatmap-month-label {
-  flex: 1;
-  text-align: center;
+  text-align: left;
+  padding: 0;
+  white-space: nowrap;
 }
 
 .heatmap-grid {
-  display: flex;
-  gap: var(--spacing-xs);
-  padding-left: 20px;
+  display: grid;
+  padding-left: 0px;
 }
 
 .heatmap-week {
